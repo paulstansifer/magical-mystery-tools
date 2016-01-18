@@ -1,0 +1,41 @@
+What tools would be useful for solving Mystery Hunt puzzles?
+
+MMS (MagicalMysteryString)
+  ;; A lazy collection of strings and their likelyhoods
+
+
+  -- .iter() -> Iter<string>;; iterate in order of likelyhood
+  -- .or(m: MMS) -> MMS ;; combine MMSes
+  -- .has_index() -> bool 
+  -- .dedup() -> MMS ;; combine duplicate entries and sum their frequencies (nonlazy!)
+  -- .map(...) -> MMS 
+  -- .filter(...) -> MMS 
+  -- .fuzzy_filter(...) -> MMS ;; adjust frequencies (downward-only to make laziness still reasonable)
+  -- .plausible(concat_source: MMS) -> MMS ;; adjust frequencies based on how likely concat_source.star() would be to produce each component ("score")
+  -- .prob_mult(f: float) -> MMS ;; for combining with `or`
+  -- .take_top(n: u32) -> MMS ;; restrict to the n best choices
+  -- .take_with_min_freq(f: float) -> MMS ;; restrict to choices with frequency at least f
+  -- .prob_of(s: string) -> float
+  -- .has(s: string) -> bool
+  -- .concat_style() -> PlainConcatenation | OverlapBy(n: u32) | OverlapAllBut(n: u32) ;; for example, a dictionary would be Plain, but ngrams are OverlapAllBut(1)
+  -- .concat(m: MMS) -> MMS ;; cross product concatenation (respecting concat_style)
+  -- .star(decline: float) -> MMS ;; produces infinite MMS of sequences, with n-length sequences being deline^n less likely
+     ;; If there's overlap, respect the probability of that overlap.
+     ;; Thus, running .star() on an ngram collection performs dissociated-press
+  -- .shufflings() -> MMS ;; like .star, but never uses each component exactly once
+  -- .remove_similar(...) -> MMS ;; no idea how this works, but it'd be nice to filter down to significantly different results
+  
+  
+default MMSes
+  -- SOWPODS
+  -- alphabet_english
+  -- alphabet_flat
+  -- google_2grams
+  -- google_3grams (etc.)
+  -- wikipedia_article_titles
+  
+  
+un_interleave(s: string) -> MMS ;; skips as little as possible of `s` to produce things with high scores
+score(s:string, concat_source: MMS) -> float ;; how easy is `s` to make with `concat_source.star(1.0)`?
+anagram(s:string) -> MMS ;; use `anagram("ttttttttttttooooooooooeeeeeeeeaaaaaaallllllnnnnnnuuuuuuiiiiisssssdddddhhhhhyyyyyIIIrrrfffbbwwkcmvg").shufflings().fuzzy_filter_by_plausibility(...) to solve the Qwantzle
+stride_paths(s:string, stride: u32, obey_boundaries: bool) -> MMS ;; find the paths through `s` with the given stride (good for wordsearches)
