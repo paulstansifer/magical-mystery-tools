@@ -6,10 +6,12 @@ MMS (MagicalMysteryString)
   -- .iter() -> Iter<string>;; iterate in order of likelihood
   -- .or(m: MMS) -> MMS ;; combine MMSes
   -- .has_index() -> bool 
+  -- .index() -> MMS ;; probably not always possible
   -- .dedup() -> MMS ;; combine duplicate entries and sum their frequencies (nonlazy!)
   -- .map(...) -> MMS 
   -- .filter(...) -> MMS 
-  -- .fuzzy_filter(...) -> MMS ;; adjust frequencies (downward-only to make laziness still reasonable)
+  -- .duplicate(...) -> MMS ;; like .filter(...), but can increase the number of occurrences, too
+  -- .probabilistic_filter(...) -> MMS ;; adjust frequencies (downward-only to make laziness still reasonable)
   -- .intersect(source: MMS) -> MMS ;; adjust frequencies based on how likely source would be to produce each component.
      ;; What you typically want is something like garbage_to_sort_though.intersect(3grams.star())
   -- .prob_mult(f: float) -> MMS ;; for combining with `or`
@@ -22,14 +24,17 @@ MMS (MagicalMysteryString)
   -- .star(decline: float) -> MMS ;; produces infinite MMS of sequences, with n-length sequences being deline^n less likely
      ;; If there's overlap, respect the probability of that overlap.
      ;; Thus, running .star() on an ngram collection performs dissociated-press
-  -- .shufflings() -> MMS ;; like .star, but uses each component exactly once
+  -- .shufflings() -> MMS ;; like .star, but uses each component exactly once. (So, impossibly large, but finite)
   -- .remove_similar(...) -> MMS ;; no idea how this works, but it'd be nice to filter down to significantly different results
+  -- .flatten() -> MMS ;; (if finite) give everything equal probability
+  -- .force() -> MMS ;; eagerly compute to a concrete representation
+  
   
   
 default MMSes
   -- SOWPODS
   -- alphabet_english
-  -- alphabet_flat
+  -- characters_english
   -- google_2grams
   -- google_3grams (etc.)
   -- wikipedia_article_titles
